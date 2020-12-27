@@ -19,8 +19,8 @@ gcc ^
   -fno-strict-aliasing ^
   main.c ^
   sm64\*.c ^
-  -L.\\dev\\GLFW\\lib ^
-  -lopengl32 ^
+  -LC:\Dev\GLFW\lib ^
   -lglfw3 ^
-  -I.\\dev\\GLFW\\include ^
+  -lopengl32 ^
+  -IC:\Dev\GLFW\include ^
   -o pendulum.exe

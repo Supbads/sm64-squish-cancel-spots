@@ -91,9 +91,10 @@ void findSpots(void) {
 
       *getSpot(x, z) = 0;
       Vec3f pos = { pendulumPos[0] + x + 0.5f, pendulumPos[1] + 1500, pendulumPos[2] + z + 0.5f };
-      // if (pos[0] == -1084 && pos[2] == -514) {
-      //   printf("%f\n", pos[1]);
-      // }
+      // was commented
+      if (pos[0] == -1084 && pos[2] == -514) {
+        printf("%f\n", pos[1]);
+      }
 
       struct Surface *floor;
       f32 floorHeight = find_floor(pos[0], pos[1], pos[2], &floor);
@@ -154,8 +155,8 @@ void findSpots(void) {
       *getSpot(x, z) = 1;
       floor->mark = 1;
       ceil->mark = 2;
-      // printf("Spot: pitch=0x%04X\n", g->currentObject->oFaceAnglePitch);
-      // fprintf("pitch,yaw,roll,trunc x,trunc z,floor height,ceil height,floor ny,push angle,x,z\n");
+       printf("Spot: pitch=0x%04X\n", g->currentObject->oFaceAnglePitch);
+       //fprintf("pitch,yaw,roll,trunc x,trunc z,floor height,ceil height,floor ny,push angle,x,z\n");
       fprintf(outputFile, "%d,%d,%d,%d,%d,%f,%f,%f,%d,%f,%f\n",
         g->currentObject->oFaceAnglePitch,
         g->currentObject->oFaceAngleYaw,
@@ -177,7 +178,7 @@ struct {
   Vec3f pos;
   f32 pitch;
   f32 yaw;
-} camera = {{-2000, 0, 0}, 0, 3.14159f / 2.0f};
+} camera = {{-1500, -3000, 0}, 0, 3.14159f / 1.0f};
 
 
 void updateCamera(GLFWwindow *window) {
@@ -253,11 +254,12 @@ void renderSurfaces(void) {
     case 'w': glColor4f(0.3f, 0.8f, 0.3f, 1); break;
     }
 
-    // glBegin(GL_TRIANGLES);
-    // glVertex3f(s->vertex1[0], s->vertex1[1], s->vertex1[2]);
-    // glVertex3f(s->vertex2[0], s->vertex2[1], s->vertex2[2]);
-    // glVertex3f(s->vertex3[0], s->vertex3[1], s->vertex3[2]);
-    // glEnd();
+    // was commented out
+    glBegin(GL_TRIANGLES);
+    glVertex3f(s->vertex1[0], s->vertex1[1], s->vertex1[2]);
+    glVertex3f(s->vertex2[0], s->vertex2[1], s->vertex2[2]);
+    glVertex3f(s->vertex3[0], s->vertex3[1], s->vertex3[2]);
+    glEnd();
 
     glClearColor(1, 1, 1, 1);
 
@@ -271,19 +273,22 @@ void renderSurfaces(void) {
     if (s->mark != 0) {
       if (s->mark == 1) {
         glColor4f(0.5f, 0.5f, 1, 1);
-        // printf("floor\n");
-        // printf("  v1 = (%d, %d, %d)\n", s->vertex1[0], s->vertex1[1], s->vertex1[2]);
-        // printf("  v2 = (%d, %d, %d)\n", s->vertex2[0], s->vertex2[1], s->vertex2[2]);
-        // printf("  v3 = (%d, %d, %d)\n", s->vertex3[0], s->vertex3[1], s->vertex3[2]);
-        // printf("  n = (%f, %f, %f)\n", s->normal[0], s->normal[1], s->normal[2]);
+        // was commented
+        printf("floor\n");
+        printf("  v1 = (%d, %d, %d)\n", s->vertex1[0], s->vertex1[1], s->vertex1[2]);
+        printf("  v2 = (%d, %d, %d)\n", s->vertex2[0], s->vertex2[1], s->vertex2[2]);
+        printf("  v3 = (%d, %d, %d)\n", s->vertex3[0], s->vertex3[1], s->vertex3[2]);
+        printf("  n = (%f, %f, %f)\n", s->normal[0], s->normal[1], s->normal[2]);
       }
       else if (s->mark == 2) {
         glColor4f(1, 0.5f, 0.5f, 1);
-        // printf("ceil\n");
-        // printf("  v1 = (%d, %d, %d)\n", s->vertex1[0], s->vertex1[1], s->vertex1[2]);
-        // printf("  v2 = (%d, %d, %d)\n", s->vertex2[0], s->vertex2[1], s->vertex2[2]);
-        // printf("  v3 = (%d, %d, %d)\n", s->vertex3[0], s->vertex3[1], s->vertex3[2]);
-        // printf("  n = (%f, %f, %f)\n", s->normal[0], s->normal[1], s->normal[2]);
+
+        // was commented
+        printf("ceil\n");
+        printf("  v1 = (%d, %d, %d)\n", s->vertex1[0], s->vertex1[1], s->vertex1[2]);
+        printf("  v2 = (%d, %d, %d)\n", s->vertex2[0], s->vertex2[1], s->vertex2[2]);
+        printf("  v3 = (%d, %d, %d)\n", s->vertex3[0], s->vertex3[1], s->vertex3[2]);
+        printf("  n = (%f, %f, %f)\n", s->normal[0], s->normal[1], s->normal[2]);
       }
       s->mark = 0;
 
@@ -376,9 +381,10 @@ void loadPendulumModel(void) {
 
 
 int main(void) {
+  
   outputFile = fopen("output.csv", "wb");
   fprintf(outputFile, "pitch,yaw,roll,trunc x,trunc z,floor height,ceil height,floor ny,push angle,x,z\n");
-
+  
   g = gstate_new(NULL);
   loadPendulumModel();
   g->currentObject = &g->objectPool[0];
@@ -389,36 +395,40 @@ int main(void) {
   g->currentObject->oPosX = pendulumPos[0];
   g->currentObject->oPosY = pendulumPos[1];
   g->currentObject->oPosZ = pendulumPos[2];
+  
   load_area_terrain(0, levelData, NULL, NULL);
-
+  
   GLFWwindow *window = openWindow();
 
   double accumTime = 0;
   double lastTime = glfwGetTime();
 
   while (!glfwWindowShouldClose(window)) {
+    
     double currentTime = glfwGetTime();
     accumTime += currentTime - lastTime;
     lastTime = currentTime;
 
-    // while (accumTime >= 1.0/30) {
+     while (accumTime >= 1.0/30) {
       clear_dynamic_surfaces();
       load_object_collision_model();
-      findSpots();
-      // if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
-      //   g->currentObject->oFaceAngleRoll += 0x40;
-      // if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
-      //   g->currentObject->oFaceAngleRoll -= 0x40;
-        g->currentObject->oFaceAngleRoll += 0x10;
+      //findSpots();
+      if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
+        g->currentObject->oFaceAngleRoll += 0x40;
+      if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
+        g->currentObject->oFaceAngleRoll -= 0x40;
+        
+        //g->currentObject->oFaceAngleRoll += 0x10;
+
       // g->currentObject->oFaceAngleRoll = -21788;
 
-      if ((s16)g->currentObject->oFaceAngleRoll == 0) {
-        break;
-      }
+      //if ((s16)g->currentObject->oFaceAngleRoll == 0) {
+        //break;
+      //}
 
       updateCamera(window);
       accumTime -= 1.0/30;
-    // }
+     }
 
     render(window);
   }
@@ -426,6 +436,8 @@ int main(void) {
   glfwTerminate();
 
   gstate_finalize(g);
+  
   fclose(outputFile);
   return 0;
+
 }
